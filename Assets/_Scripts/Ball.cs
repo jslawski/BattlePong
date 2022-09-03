@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
-{
-    [SerializeField]
-    private Player owningPlayer = Player.None;
+{    
+    public Player owningPlayer = Player.None;
 
     private Vector3 moveDirection = Vector3.zero;
     private float moveSpeed = 5f;
@@ -91,7 +90,7 @@ public class Ball : MonoBehaviour
             this.HandleBallBallCollision(collision.contacts[0].normal);
 
         }
-        else if (collision.gameObject.tag == "Wall")
+        else if (collision.gameObject.tag == "Wall" || collision.gameObject.tag == "Brick")
         {
             this.HandlePerfectReflectionCollision(collision.contacts[0].normal);
         }
