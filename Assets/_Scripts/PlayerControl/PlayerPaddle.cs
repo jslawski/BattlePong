@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Player { Player1, Player2, None };
+
 public class PlayerPaddle : MonoBehaviour
 {
-    [SerializeField]
-    private int playerNumber = 0;
+    public Player playerNumber = Player.None;
 
     [SerializeField]
     private float moveSpeed = 5f;
@@ -18,14 +19,14 @@ public class PlayerPaddle : MonoBehaviour
     {
         switch (this.playerNumber)
         {
-            case 1:
+            case Player.Player1:
                 this.inputHandler = new Player1InputHandler();
                 break;
-            case 2:
+            case Player.Player2:
                 this.inputHandler = new Player2InputHandler();
                 break;
             default:
-                Debug.LogError("Error: Unrecognized Player ID: " + this.playerNumber);
+                Debug.LogError("Error: Unrecognized Player ID: " + this.playerNumber + ", unable to setup input handler.");
                 break;
         }
         
