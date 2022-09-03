@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     private float ballSpawnXPosition = 5f;
 
+    public List<PlayerPaddle> playerPaddles;
+
     void Awake()
     {
         if (instance == null)
@@ -17,7 +19,16 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
 
+        this.SetupPlayerPaddles();
+
         this.LoadResources();
+    }
+
+    private void SetupPlayerPaddles()
+    {
+        this.playerPaddles = new List<PlayerPaddle>();
+        this.playerPaddles.Add(GameObject.Find("Player1").GetComponent<PlayerPaddle>());
+        this.playerPaddles.Add(GameObject.Find("Player2").GetComponent<PlayerPaddle>());
     }
 
     private void LoadResources()
