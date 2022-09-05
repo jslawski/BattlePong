@@ -15,6 +15,8 @@ public class SpeedUpBrick : Brick
         if (this.ability != null)
         {
             this.ability.Execute(triggeredBall.owningPlayer);
+
+            GameManager.instance.SpawnParticleSignal(this.transform.position, triggeredBall.owningPlayer, triggeredBall.owningPlayer);
         }
 
         base.TriggerAbility(triggeredBall);

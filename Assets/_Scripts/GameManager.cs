@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     private GameObject ballPrefab;
+    private GameObject particleSignalPrefab;
 
     private float ballSpawnXPosition = 5f;
 
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
     private void LoadResources()
     {
         this.ballPrefab = Resources.Load<GameObject>("Prefabs/Ball");
+        this.particleSignalPrefab = Resources.Load<GameObject>("Prefabs/ParticleSignal");
     }
 
     private void StartGame()
@@ -95,6 +97,13 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(3.0f);
             this.SpawnBall(owningPlayer);
         }
+    }
+
+    public void SpawnParticleSignal(Vector3 spawnPoint, Player owningPlayer, Player targetPlayer)
+    {
+        GameObject particleSignalInstance = Instantiate(this.particleSignalPrefab, spawnPoint, new Quaternion()) as GameObject;
+        ParticleSignal particleSignalComponent = particleSignalInstance.GetComponent<ParticleSignal>();
+        particleSignalComponent.SetupParticleSignal(this.playerPaddles[(int)targetPlayer].gameObject, owningPlayer);
     }
 
     //Power-Up Functions
@@ -158,5 +167,5 @@ public class GameManager : MonoBehaviour
         ballComponent.SetupBall(owningPlayer);
     }
 
-    #endregion
+    #endregion    
 }

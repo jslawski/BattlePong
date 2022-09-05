@@ -14,6 +14,8 @@ public class ReverseControlsBrick : Brick
         if (this.ability != null)
         {
             this.ability.Execute(triggeredBall.opponent);
+
+            GameManager.instance.SpawnParticleSignal(this.transform.position, triggeredBall.owningPlayer, triggeredBall.opponent);
         }
 
         base.TriggerAbility(triggeredBall);

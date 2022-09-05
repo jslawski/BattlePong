@@ -7,7 +7,7 @@ public class SpeedDownBrick : Brick
     // Start is called before the first frame update
     void Start()
     {
-        this.ability = new SpeedChangeCommand(0.75f);
+        this.ability = new SpeedChangeCommand(0.5f);
     }
 
     protected override void TriggerAbility(Ball triggeredBall)
@@ -15,6 +15,8 @@ public class SpeedDownBrick : Brick
         if (this.ability != null)
         {
             this.ability.Execute(triggeredBall.opponent);
+
+            GameManager.instance.SpawnParticleSignal(this.transform.position, triggeredBall.owningPlayer, triggeredBall.opponent);
         }
 
         base.TriggerAbility(triggeredBall);
