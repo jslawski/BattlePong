@@ -15,7 +15,10 @@ public class GameManager : MonoBehaviour
 
     public List<PlayerPaddle> playerPaddles;
 
-    private float powerUpTime = 90f;
+    //This can be changed to have "limited time" power-ups
+    //I felt the game was more interesting when the power-ups were more "permanent,"
+    //so I've set this to an arbitrarily long time.
+    private float powerUpTime = 9999f;
 
     private List<TextMeshProUGUI> playerScores;
 
@@ -237,4 +240,13 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion    
+
+    private void Update()
+    {
+        //Escape to quit
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
 }
