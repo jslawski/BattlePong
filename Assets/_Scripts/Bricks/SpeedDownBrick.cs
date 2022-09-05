@@ -7,7 +7,7 @@ public class SpeedDownBrick : Brick
     // Start is called before the first frame update
     void Start()
     {
-        this.ability = new SpeedChangeCommand(0.5f);
+        this.ability = new SpeedChangeCommand(0.75f);
     }
 
     protected override void TriggerAbility(Ball triggeredBall)

@@ -6,7 +6,7 @@ public class SizeDownBrick : Brick
 {
     void Start()
     {
-        this.ability = new SizeChangeCommand(0.5f);
+        this.ability = new SizeChangeCommand(1.0f);
     }
 
     protected override void TriggerAbility(Ball triggeredBall)

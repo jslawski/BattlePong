@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
 
     public List<PlayerPaddle> playerPaddles;
 
-    private float powerUpTime = 30f;
+    private float powerUpTime = 90f;
 
     void Awake()
     {
@@ -144,11 +144,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ChangeSizeOfPlayerTimed(Player targetPlayer, float newSize)
     {        
-        this.playerPaddles[(int)targetPlayer].transform.localScale = new Vector3(1.0f, newSize, 1.0f);
+        this.playerPaddles[(int)targetPlayer].transform.localScale = new Vector3(0.5f, newSize, 1.0f);
 
         yield return new WaitForSeconds(this.powerUpTime);
 
-        this.playerPaddles[(int)targetPlayer].transform.localScale = Vector3.one;
+        this.playerPaddles[(int)targetPlayer].transform.localScale = new Vector3(0.5f, 2.0f, 1.0f);
     }
 
     public void DuplicateBall(Player owningPlayer, Vector3 spawnPosition)

@@ -9,29 +9,28 @@ public class Ball : MonoBehaviour
 
     private Vector3 moveDirection = Vector3.zero;
     private float moveSpeed = 10f;
-    private float ownerSpeedIncrement = 0.5f;
     private float ballCollisionSpeedIncrement = 1f;
+    private float paddleHitSpeedIncrement = 0.5f;
 
-    private float minXDirectionMagnitude = 0.3f;
+
+    private float minXDirectionMagnitude = 1.0f;
 
     public void SetupBall(Player ballOwner)
     {
+        this.SetPlayerOwner(ballOwner);
+
         switch (ballOwner)
         {
             case Player.Player1:
-                this.moveDirection = new Vector3(-1.0f, -0.5f, 0.0f);
-                this.opponent = Player.Player2;
+                this.moveDirection = new Vector3(-1.0f, -0.5f, 0.0f);        
                 break;
             case Player.Player2:
                 this.moveDirection = new Vector3(1.0f, -0.5f, 0.0f);
-                this.opponent = Player.Player1;
                 break;
             default:
                 Debug.LogError("Unknown Player: " + ballOwner + ", unable to setup ball.");
-                break;
+                return;                
         }
-
-        this.owningPlayer = ballOwner;
     }
 
     private void Update()
@@ -51,7 +50,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        this.transform.Translate(this.moveDirection * this.moveSpeed * Time.fixedDeltaTime);
+        this.transform.Translate(this.moveDirection.normalized * this.moveSpeed * Time.fixedDeltaTime);
     }
 
     private Vector3 GetPerfectReflectionVector(Vector3 collisionNormal)
@@ -93,17 +92,37 @@ public class Ball : MonoBehaviour
     /// <summary>
     /// Called whenever the ball collides with a player paddle, causing it to reflect in a
     /// direction relative to where on the paddle the collision occurred.
-    /// Also increases the speed of the ball if the paddle it collided with was the owner's
+    /// Also increases the speed of the ball
     /// </summary>
     /// <param name="collision"></param>
     private void HandleBallPaddleCollision(Collision collision)
     {
-        bool isOwner = (collision.gameObject.GetComponent<PlayerPaddle>().playerNumber == this.owningPlayer);
         Vector3 reflectionVector = GetPaddleReflectionVector(collision.collider, collision.contacts[0].point);
         this.moveDirection = reflectionVector;
-        this.moveSpeed += this.ownerSpeedIncrement;
+        this.moveSpeed += this.paddleHitSpeedIncrement;
     }
 
+    private void SetPlayerOwner(Player newPlayer)
+    {
+        this.owningPlayer = newPlayer;
+
+        MeshRenderer ballMesh = this.gameObject.GetComponent<MeshRenderer>();
+
+        switch (this.owningPlayer)
+        {
+            case Player.Player1:
+                this.opponent = Player.Player2;
+                ballMesh.material = Resources.Load<Material>("Materials/Player1");
+                break;
+            case Player.Player2:
+                this.opponent = Player.Player1;
+                ballMesh.material = Resources.Load<Material>("Materials/Player2");
+                break;
+            default:
+                Debug.LogError("Unknown player ID: " + this.opponent + " Unable to re-assign opponent.");
+                break;
+        }
+    }
 
     private void HandleBallGoalCollision()
     {
@@ -113,17 +132,14 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //Reflect the ball if it collides with another ball or a wall using a perfect reflection vector
         if (collision.gameObject.tag == "Ball")
         {
             this.HandleBallBallCollision(collision.contacts[0].normal);
-
         }
         else if (collision.gameObject.tag == "Wall" || collision.gameObject.tag == "Brick")
         {
             this.HandlePerfectReflectionCollision(collision.contacts[0].normal);
         }
-        //Reflect the ball if it collides with a player paddle relative to where on the paddle the ball made contact
         else if (collision.gameObject.tag == "Paddle")
         {
             this.HandleBallPaddleCollision(collision);
