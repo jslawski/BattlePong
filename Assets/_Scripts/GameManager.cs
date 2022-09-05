@@ -141,6 +141,9 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator DisplayEndgame(Player losingPlayer)
     {
+        AudioClip audioClip = Resources.Load<AudioClip>("Audio/Victory");
+        AudioSource.PlayClipAtPoint(audioClip, Vector3.zero);
+
         this.endScreenPanel.SetActive(true);
 
         TextMeshProUGUI victoryText = this.endScreenPanel.GetComponentInChildren<TextMeshProUGUI>();

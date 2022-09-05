@@ -107,6 +107,9 @@ public class Ball : MonoBehaviour
     {
         this.HandlePerfectReflectionCollision(collisionNormal);
         this.moveSpeed += this.ballCollisionSpeedIncrement;
+
+        AudioClip audioClip = Resources.Load<AudioClip>("Audio/PaddleHit");
+        AudioSource.PlayClipAtPoint(audioClip, Vector3.zero);
     }
 
     /// <summary>
@@ -131,12 +134,27 @@ public class Ball : MonoBehaviour
         Vector3 reflectionVector = GetPaddleReflectionVector(collision.collider, collision.contacts[0].point);
         this.moveDirection = reflectionVector;
         this.moveSpeed += this.paddleHitSpeedIncrement;
+
+        AudioClip audioClip = Resources.Load<AudioClip>("Audio/PaddleHit");
+        AudioSource.PlayClipAtPoint(audioClip, Vector3.zero);
     }
 
-    
-
-    private void HandleBallGoalCollision()
+    private void HandleBallGoalCollision(Collision collision)
     {
+        Player goalOwner = collision.gameObject.GetComponent<PlayerGoal>().owningPlayer;
+
+        AudioClip audioClip;
+        if (goalOwner == this.owningPlayer)
+        {
+            audioClip = Resources.Load<AudioClip>("Audio/OwnGoalHit");
+        }
+        else
+        {
+            audioClip = Resources.Load<AudioClip>("Audio/OpponentGoalHit");
+        }
+
+        AudioSource.PlayClipAtPoint(audioClip, Vector3.zero);
+
         GameManager.instance.RespawnBall(this.owningPlayer);
         Destroy(this.gameObject);
     }
@@ -157,7 +175,7 @@ public class Ball : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Goal")
         {
-            this.HandleBallGoalCollision();
+            this.HandleBallGoalCollision(collision);
         }
     }
 }

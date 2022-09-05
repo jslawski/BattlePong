@@ -8,6 +8,8 @@ public class MultiBallBrick : Brick
     void Start()
     {
         this.ability = new MultiBallCommand(this.transform.position);
+
+        this.audioClip = Resources.Load<AudioClip>("Audio/PowerUpHit");
     }
 
     protected override void TriggerAbility(Ball triggeredBall)

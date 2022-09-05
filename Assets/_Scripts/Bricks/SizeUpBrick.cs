@@ -7,6 +7,8 @@ public class SizeUpBrick : Brick
     void Start()
     {
         this.ability = new SizeChangeCommand(3.0f);
+
+        this.audioClip = Resources.Load<AudioClip>("Audio/PowerUpHit");
     }
 
     protected override void TriggerAbility(Ball triggeredBall)

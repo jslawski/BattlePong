@@ -7,6 +7,8 @@ public class ReverseControlsBrick : Brick
     void Start()
     {
         this.ability = new ReverseControlsCommand();
+
+        this.audioClip = Resources.Load<AudioClip>("Audio/PowerUpHit");
     }
 
     protected override void TriggerAbility(Ball triggeredBall)

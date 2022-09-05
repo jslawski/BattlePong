@@ -8,6 +8,8 @@ public class SpeedUpBrick : Brick
     void Start()
     {
         this.ability = new SpeedChangeCommand(1.5f);
+
+        this.audioClip = Resources.Load<AudioClip>("Audio/PowerUpHit");
     }
 
     protected override void TriggerAbility(Ball triggeredBall)

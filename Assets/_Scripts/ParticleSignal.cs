@@ -14,7 +14,7 @@ public class ParticleSignal : MonoBehaviour
 
     int count;
 
-    float particleSystemDurationInSeconds = 1f;
+    float particleSystemDurationInSeconds = 0.75f;
 
     public void SetupParticleSignal(GameObject paddleTarget, Player owningPlayer)
     {

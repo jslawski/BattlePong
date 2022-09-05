@@ -7,6 +7,8 @@ public class SizeDownBrick : Brick
     void Start()
     {
         this.ability = new SizeChangeCommand(1.0f);
+
+        this.audioClip = Resources.Load<AudioClip>("Audio/PowerUpHit");
     }
 
     protected override void TriggerAbility(Ball triggeredBall)

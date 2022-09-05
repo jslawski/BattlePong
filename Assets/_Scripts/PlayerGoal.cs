@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerGoal : MonoBehaviour
-{
-    [SerializeField]
-    private Player owningPlayer = Player.None;
+{    
+    public Player owningPlayer = Player.None;
 
     private void OnCollisionEnter(Collision collision)
     {
