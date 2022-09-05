@@ -12,6 +12,8 @@ public class Ball : MonoBehaviour
     private float ownerSpeedIncrement = 0.5f;
     private float ballCollisionSpeedIncrement = 1f;
 
+    private float minXDirectionMagnitude = 0.3f;
+
     public void SetupBall(Player ballOwner)
     {
         switch (ballOwner)
@@ -31,7 +33,22 @@ public class Ball : MonoBehaviour
 
         this.owningPlayer = ballOwner;
     }
-   
+
+    private void Update()
+    {
+        if (Mathf.Abs(this.moveDirection.x) < this.minXDirectionMagnitude)
+        {
+            if (this.moveDirection.x > 0)
+            {
+                this.moveDirection = new Vector3(this.minXDirectionMagnitude, this.moveDirection.y, this.moveDirection.z);
+            }
+            else
+            {
+                this.moveDirection = new Vector3(-this.minXDirectionMagnitude, this.moveDirection.y, this.moveDirection.z);
+            }
+        }
+    }
+
     private void FixedUpdate()
     {
         this.transform.Translate(this.moveDirection * this.moveSpeed * Time.fixedDeltaTime);
@@ -78,12 +95,20 @@ public class Ball : MonoBehaviour
     /// direction relative to where on the paddle the collision occurred.
     /// Also increases the speed of the ball if the paddle it collided with was the owner's
     /// </summary>
+    /// <param name="collision"></param>
     private void HandleBallPaddleCollision(Collision collision)
     {
         bool isOwner = (collision.gameObject.GetComponent<PlayerPaddle>().playerNumber == this.owningPlayer);
         Vector3 reflectionVector = GetPaddleReflectionVector(collision.collider, collision.contacts[0].point);
         this.moveDirection = reflectionVector;
         this.moveSpeed += this.ownerSpeedIncrement;
+    }
+
+
+    private void HandleBallGoalCollision()
+    {
+        GameManager.instance.RespawnBall(this.owningPlayer);
+        Destroy(this.gameObject);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -102,6 +127,10 @@ public class Ball : MonoBehaviour
         else if (collision.gameObject.tag == "Paddle")
         {
             this.HandleBallPaddleCollision(collision);
+        }
+        else if (collision.gameObject.tag == "Goal")
+        {
+            this.HandleBallGoalCollision();
         }
     }
 }

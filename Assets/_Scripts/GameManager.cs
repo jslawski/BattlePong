@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
         this.SetupPlayerPaddles();
 
         this.LoadResources();
+
+        Invoke("StartGame", 3.0f);
     }
 
     private void SetupPlayerPaddles()
@@ -36,6 +38,12 @@ public class GameManager : MonoBehaviour
     private void LoadResources()
     {
         this.ballPrefab = Resources.Load<GameObject>("Prefabs/Ball");
+    }
+
+    private void StartGame()
+    {
+        this.SpawnBall(Player.Player1);
+        this.SpawnBall(Player.Player2);
     }
 
     public void SpawnBall(Player owningPlayer)
@@ -60,16 +68,32 @@ public class GameManager : MonoBehaviour
         ballComponent.SetupBall(owningPlayer);        
     }
 
-    // Update is called once per frame
-    void Update()
+    public void RespawnBall(Player owningPlayer)
     {
-        if (Input.GetKeyUp(KeyCode.Alpha1))
+        StartCoroutine(this.RespawnBallAfterDelay(owningPlayer));
+    }
+
+    public IEnumerator RespawnBallAfterDelay(Player owningPlayer)
+    {
+        yield return null;
+
+        bool ownerBallExists = false;
+
+        //Make sure that no other balls exist in the scene that belong to the player
+        GameObject[] allBalls = GameObject.FindGameObjectsWithTag("Ball");
+        for (int i = 0; i < allBalls.Length; i++)
         {
-            this.SpawnBall(Player.Player1);
+            Ball curBall = allBalls[i].GetComponent<Ball>();
+            if (curBall != null && curBall.owningPlayer == owningPlayer)
+            {
+                ownerBallExists = true;
+            }
         }
-        if (Input.GetKeyUp(KeyCode.Alpha2))
+
+        if (ownerBallExists == false)
         {
-            this.SpawnBall(Player.Player2);
+            yield return new WaitForSeconds(3.0f);
+            this.SpawnBall(owningPlayer);
         }
     }
 
