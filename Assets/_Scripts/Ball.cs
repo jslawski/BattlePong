@@ -12,11 +12,14 @@ public class Ball : MonoBehaviour
     private float ballCollisionSpeedIncrement = 1f;
     private float paddleHitSpeedIncrement = 0.5f;
 
+    private ParticleSystem ballTrail;
 
     private float minXDirectionMagnitude = 1.0f;
 
     public void SetupBall(Player ballOwner)
     {
+        this.ballTrail = GetComponent<ParticleSystem>();
+
         this.SetPlayerOwner(ballOwner);
 
         switch (ballOwner)
@@ -33,6 +36,34 @@ public class Ball : MonoBehaviour
         }
     }
 
+    private void SetPlayerOwner(Player newPlayer)
+    {
+        this.owningPlayer = newPlayer;
+
+        MeshRenderer ballMesh = this.gameObject.GetComponent<MeshRenderer>();        
+
+        switch (this.owningPlayer)
+        {
+            case Player.Player1:
+                this.opponent = Player.Player2;
+                ballMesh.material = Resources.Load<Material>("Materials/Player1");
+                
+                break;
+            case Player.Player2:
+                this.opponent = Player.Player1;
+                ballMesh.material = Resources.Load<Material>("Materials/Player2");
+                break;
+            default:
+                Debug.LogError("Unknown player ID: " + this.opponent + " Unable to re-assign opponent.");
+                break;
+        }
+
+        ParticleSystem.MainModule main = this.ballTrail.main;
+        main.startColor = ballMesh.material.color;
+
+        this.ballTrail.Play();
+    }
+    
     private void Update()
     {
         if (Mathf.Abs(this.moveDirection.x) < this.minXDirectionMagnitude)
@@ -47,7 +78,7 @@ public class Ball : MonoBehaviour
             }
         }
     }
-
+    
     private void FixedUpdate()
     {
         this.transform.Translate(this.moveDirection.normalized * this.moveSpeed * Time.fixedDeltaTime);
@@ -102,27 +133,7 @@ public class Ball : MonoBehaviour
         this.moveSpeed += this.paddleHitSpeedIncrement;
     }
 
-    private void SetPlayerOwner(Player newPlayer)
-    {
-        this.owningPlayer = newPlayer;
-
-        MeshRenderer ballMesh = this.gameObject.GetComponent<MeshRenderer>();
-
-        switch (this.owningPlayer)
-        {
-            case Player.Player1:
-                this.opponent = Player.Player2;
-                ballMesh.material = Resources.Load<Material>("Materials/Player1");
-                break;
-            case Player.Player2:
-                this.opponent = Player.Player1;
-                ballMesh.material = Resources.Load<Material>("Materials/Player2");
-                break;
-            default:
-                Debug.LogError("Unknown player ID: " + this.opponent + " Unable to re-assign opponent.");
-                break;
-        }
-    }
+    
 
     private void HandleBallGoalCollision()
     {
