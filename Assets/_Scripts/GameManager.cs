@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +16,13 @@ public class GameManager : MonoBehaviour
     public List<PlayerPaddle> playerPaddles;
 
     private float powerUpTime = 90f;
+
+    private List<TextMeshProUGUI> playerScores;
+
+    [SerializeField]
+    private GameObject endScreenPanel;
+
+    private Coroutine endGameCoroutine = null;
 
     void Awake()
     {
@@ -34,6 +43,10 @@ public class GameManager : MonoBehaviour
         this.playerPaddles = new List<PlayerPaddle>();
         this.playerPaddles.Add(GameObject.Find("Player1").GetComponent<PlayerPaddle>());
         this.playerPaddles.Add(GameObject.Find("Player2").GetComponent<PlayerPaddle>());
+
+        this.playerScores = new List<TextMeshProUGUI>();
+        this.playerScores.Add(GameObject.Find("Player1_Lives").GetComponent<TextMeshProUGUI>());
+        this.playerScores.Add(GameObject.Find("Player2_Lives").GetComponent<TextMeshProUGUI>());
     }
 
     private void LoadResources()
@@ -104,6 +117,59 @@ public class GameManager : MonoBehaviour
         GameObject particleSignalInstance = Instantiate(this.particleSignalPrefab, spawnPoint, new Quaternion()) as GameObject;
         ParticleSignal particleSignalComponent = particleSignalInstance.GetComponent<ParticleSignal>();
         particleSignalComponent.SetupParticleSignal(this.playerPaddles[(int)targetPlayer].gameObject, owningPlayer);
+    }
+
+    public void UpdateLives(Player targetPlayer)
+    {
+        if (this.playerPaddles[(int)targetPlayer].playerLives <= 0)
+        {
+            return;
+        }
+
+        this.playerPaddles[(int)targetPlayer].playerLives -= 1;
+
+        this.playerScores[(int)targetPlayer].text = this.playerPaddles[(int)targetPlayer].playerLives.ToString();
+
+        if (this.playerPaddles[(int)targetPlayer].playerLives == 0)
+        {
+            if (this.endGameCoroutine == null)
+            {
+                this.endGameCoroutine = StartCoroutine(this.DisplayEndgame(targetPlayer));
+            }
+        }
+    }
+
+    private IEnumerator DisplayEndgame(Player losingPlayer)
+    {
+        this.endScreenPanel.SetActive(true);
+
+        TextMeshProUGUI victoryText = this.endScreenPanel.GetComponentInChildren<TextMeshProUGUI>();
+
+        switch (losingPlayer)
+        {
+            case Player.Player1:
+                victoryText.text = "PLAYER 2\nWINS!";
+                victoryText.color = this.playerPaddles[(int)Player.Player2].gameObject.GetComponent<MeshRenderer>().material.color;
+                break;
+            case Player.Player2:
+                victoryText.text = "PLAYER 1\nWINS!";
+                victoryText.color = this.playerPaddles[(int)Player.Player1].gameObject.GetComponent<MeshRenderer>().material.color;
+                break;
+            default:
+                Debug.LogError("Unknown player ID: " + losingPlayer + " Unable to update endgame screen.");
+                break;
+        }        
+
+        //Wait for input...
+        while (!Input.GetKeyUp(KeyCode.Space))
+        {
+            yield return null;
+        }
+
+        this.endGameCoroutine = null;
+
+        //Restart the game
+        SceneManager.LoadScene(0);
     }
 
     //Power-Up Functions

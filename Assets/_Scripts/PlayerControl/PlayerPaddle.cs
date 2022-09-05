@@ -10,6 +10,8 @@ public class PlayerPaddle : MonoBehaviour
     
     public float moveSpeed = 5f;
 
+    public int playerLives = 3;
+
     private PlayerCommand currentFrameCommand = null;
 
     private InputHandler inputHandler;
