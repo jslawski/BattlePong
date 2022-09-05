@@ -7,9 +7,8 @@ public enum Player { Player1, Player2, None };
 public class PlayerPaddle : MonoBehaviour
 {
     public Player playerNumber = Player.None;
-
-    [SerializeField]
-    private float moveSpeed = 5f;
+    
+    public float moveSpeed = 5f;
 
     private PlayerCommand currentFrameCommand = null;
 

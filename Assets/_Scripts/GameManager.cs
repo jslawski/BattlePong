@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
 
     public List<PlayerPaddle> playerPaddles;
 
+    private float powerUpTime = 30f;
+
     void Awake()
     {
         if (instance == null)
@@ -70,4 +72,67 @@ public class GameManager : MonoBehaviour
             this.SpawnBall(Player.Player2);
         }
     }
+
+    //Power-Up Functions
+    #region Power-Up Functions
+    public void ChangeSpeedOfPlayer(Player targetPlayer, float speedChange)
+    {
+        StartCoroutine(this.ChangeSpeedOfPlayerTimed(targetPlayer, speedChange));
+    }
+
+    private IEnumerator ChangeSpeedOfPlayerTimed(Player targetPlayer, float speedChange)
+    {
+        this.playerPaddles[(int)targetPlayer].moveSpeed *= speedChange;       
+
+        yield return new WaitForSeconds(this.powerUpTime);
+
+        this.playerPaddles[(int)targetPlayer].moveSpeed /= speedChange;
+    }
+
+    public void ReverseControlsOfPlayer(Player targetPlayer)
+    {
+        if (this.playerPaddles[(int)targetPlayer].moveSpeed < 0)
+        {
+            return;
+        }
+
+        StartCoroutine(this.ReverseControlsOfPlayerTimed(targetPlayer));
+    }
+
+    private IEnumerator ReverseControlsOfPlayerTimed(Player targetPlayer)
+    {
+        this.playerPaddles[(int)targetPlayer].moveSpeed *= -1;
+
+        yield return new WaitForSeconds(this.powerUpTime);
+
+        this.playerPaddles[(int)targetPlayer].moveSpeed *= -1;
+    }
+
+    public void ChangeSizeOfPlayer(Player targetPlayer, float newSize)
+    {
+        if (this.playerPaddles[(int)targetPlayer].transform.localScale.y == newSize)
+        {
+            return;
+        }
+
+        StartCoroutine(this.ChangeSizeOfPlayerTimed(targetPlayer, newSize));
+    }
+
+    private IEnumerator ChangeSizeOfPlayerTimed(Player targetPlayer, float newSize)
+    {        
+        this.playerPaddles[(int)targetPlayer].transform.localScale = new Vector3(1.0f, newSize, 1.0f);
+
+        yield return new WaitForSeconds(this.powerUpTime);
+
+        this.playerPaddles[(int)targetPlayer].transform.localScale = Vector3.one;
+    }
+
+    public void DuplicateBall(Player owningPlayer, Vector3 spawnPosition)
+    {
+        GameObject ballInstance = Instantiate(this.ballPrefab, spawnPosition, new Quaternion()) as GameObject;
+        Ball ballComponent = ballInstance.GetComponent<Ball>();
+        ballComponent.SetupBall(owningPlayer);
+    }
+
+    #endregion
 }

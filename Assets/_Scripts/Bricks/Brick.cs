@@ -4,23 +4,15 @@ using UnityEngine;
 
 public class Brick : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    protected PowerUpCommand ability = null;
 
-    public virtual void TriggerAbility(Player ballOwner)
-    {
-
-    }
+    protected virtual void TriggerAbility(Ball triggeredBall){}
 
     protected void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Ball")
-        {
-            Player ballOwner = collision.gameObject.GetComponent<Ball>().owningPlayer;
-            this.TriggerAbility(ballOwner);
+        {            
+            this.TriggerAbility(collision.gameObject.GetComponent<Ball>());
             Destroy(this.gameObject);
         }
     }

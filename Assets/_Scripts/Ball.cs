@@ -5,12 +5,12 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {    
     public Player owningPlayer = Player.None;
+    public Player opponent = Player.None;
 
     private Vector3 moveDirection = Vector3.zero;
-    private float moveSpeed = 5f;
-    private float ownerSpeedIncrement = 0.1f;
+    private float moveSpeed = 10f;
+    private float ownerSpeedIncrement = 0.5f;
     private float ballCollisionSpeedIncrement = 1f;
-
 
     public void SetupBall(Player ballOwner)
     {
@@ -18,14 +18,18 @@ public class Ball : MonoBehaviour
         {
             case Player.Player1:
                 this.moveDirection = new Vector3(-1.0f, -0.5f, 0.0f);
+                this.opponent = Player.Player2;
                 break;
             case Player.Player2:
                 this.moveDirection = new Vector3(1.0f, -0.5f, 0.0f);
+                this.opponent = Player.Player1;
                 break;
             default:
                 Debug.LogError("Unknown Player: " + ballOwner + ", unable to setup ball.");
                 break;
         }
+
+        this.owningPlayer = ballOwner;
     }
    
     private void FixedUpdate()
